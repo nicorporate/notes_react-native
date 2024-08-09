@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import realm from '../../store/realm';
+import { HeaderComponent, MainComponent } from '../components/NoteComponent';
+
 
 
 const saveNote = (newNote) => {
@@ -31,10 +33,29 @@ const saveNote = (newNote) => {
 
 const EditNoteScreen = (props) => {
     const [tempNote, setTempNote] = useState('');
-    const { navigation } = props;
+    const { route, navigation } = props;
+    
+    const id = route.params.noteId;
+    // const data = realm.objects('Note').filtered(id);
+    const [dataToUpdate, setDataToUpdate] = useState([]);
+    // const data = realm.objects('Note').filtered(`id = ${id}`);
+    // useEffect(() => {
+    //     console.log(id)
+    // }, [id])
+
+    useEffect(() => {
+        const data = realm.objects('Note').filtered(`id = ${id}`);
+        setDataToUpdate(data)
+        
+    }, [] )
+    useEffect(() => {
+        console.log('edit screen')
+        console.log(dataToUpdate)
+    }, [dataToUpdate])
         return (
+            
             <View style={styles.mainContainer}>
-                <View style={styles.headerContainer}>
+                {/* <View style={styles.headerContainer}>
                     <Text style={styles.title}>Create</Text>
                     <TouchableOpacity
                     style={styles.button}
@@ -53,6 +74,12 @@ const EditNoteScreen = (props) => {
                     placeholder="Write here"
                     style={styles.input}
                     onChangeText={(text) => setTempNote(text)}
+                /> */}
+                <HeaderComponent 
+                    title="Edit"
+                />
+                <MainComponent 
+                    date="Date"
                 />
             </View>
         )
