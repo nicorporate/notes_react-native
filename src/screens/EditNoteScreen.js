@@ -29,19 +29,7 @@ const saveNote = (newNote) => {
     }
 }
 
-const getCurrentDate = () => {
-    const months = [
-        "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
-    ];
-    const noteDate = new Date();
-    const dateOnly = noteDate.getDate();
-    const monthOnly = noteDate.getMonth();
-    const yearOnly = noteDate.getFullYear();
-
-    return months[monthOnly] + ' ' + dateOnly + ', ' + yearOnly;
-};
-
-const AddNoteScreen = (props) => {
+const EditNoteScreen = (props) => {
     const [tempNote, setTempNote] = useState('');
     const { navigation } = props;
         return (
@@ -59,18 +47,17 @@ const AddNoteScreen = (props) => {
                         />
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.date}>{ getCurrentDate() }</Text>
+                <Text style={styles.date}>Date</Text>
                 <TextInput
                     multiline
                     placeholder="Write here"
-                    placeholderTextColor="gray"
                     style={styles.input}
                     onChangeText={(text) => setTempNote(text)}
                 />
             </View>
         )
 };
-export default AddNoteScreen;
+export default EditNoteScreen;
 
 const styles = StyleSheet.create({
     mainContainer: {
@@ -95,19 +82,15 @@ const styles = StyleSheet.create({
     date: {
         top: 16,
         left: 16,
-        color: 'black',
-        paddingBottom: 16
+        color: 'black'
     },
     input: {
         fontSize: 16,
-        // flex: 1,
-        // right: 8,
-        // left: 16,
+        flex: 1,
+        right: 16,
+        left: 16,
         // textAlignVertical: 'bottom'
         textAlignVertical: 'top',
-        color: 'black',
-        borderWidth: 2,
-        padding: 8,
-        margin: 16
+        color: 'black'
     }
 })
