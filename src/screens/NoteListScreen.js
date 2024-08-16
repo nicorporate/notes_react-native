@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, StyleSheet, View, Text } from "react-native";
+import { TouchableOpacity, StyleSheet, View, Text, TextInput } from "react-native";
 import { Icon } from 'react-native-elements';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -25,12 +25,27 @@ const dateFormat = (date) => {
 const NoteListScreen = (props) => {
     const {navigation} = props;
     const [data, setData] = useState([]);
+    const [searchText, setSearchText] = useState('');
+
+
+    const searchData = (value) => {
+        const dataFromDatabase = realm.objects('Note').sorted('date', true);
+        const searchedData = dataFromDatabase.filter((item) => {
+            const itemData = item.note.toLowerCase();
+            const valueData = value.toLowerCase();
+            return itemData.indexOf(valueData) > -1;
+         });
+        setData(searchedData);
+        setSearchText(value);
+    };
 
     useEffect(() => {
         const noteListPage = navigation.addListener( 'focus', () => {
             const notes = realm.objects('Note');
             const notesByDate = notes.sorted('id', true);
             setData(notesByDate);
+            setSearchText('');
+
         });
         return noteListPage;
     }, []);
@@ -46,8 +61,17 @@ const NoteListScreen = (props) => {
                 data={data}
                 keyExtractor={ (item) => item.id}
                 showsVerticalScrollIndicator={false}
+                ListHeaderComponent={
+                    <View style = {styles.searchBox}>
+                        <Icon name="search" type="font-awesome" size={18} style={styles.searchIcon} color="grey" />
+                        <TextInput placeholder="Search Here" style={styles.searchInput} onChangeText={(text) => searchData(text)} value={searchText} />
+                    </View>
+                }
+                keyboardShouldPersistTaps={'handled'}
                 renderItem={({item}) => {
+                    
                     return (
+
                         <View style={styles.mainDataContainer}>
                             <TouchableOpacity
                                 style={styles.noteButton}
@@ -67,6 +91,11 @@ const NoteListScreen = (props) => {
                         </View>
                     )
                 }}
+                ListEmptyComponent={
+                    <View style={styles.searchEmpty}>
+                        <Text style={styles.searchEmptyText}>No Items</Text>
+                    </View>
+                }
             />
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('CreateNote')}>
@@ -139,7 +168,31 @@ const styles = StyleSheet.create({
     dateText: {
         fontSize: 12,
         color: 'black'
+    },
+
+    searchBox: {
+        flexDirection: 'row',
+        borderWidth: 1,
+        margin: 8,
+        borderRadius: 10,
+        flex: 1,
+        alignItems: 'center'
+    },
+    searchIcon: {
+        padding: 8,
+        paddingRight: 0
+    },
+    searchInput: {
+        height: 30,
+        padding: 8,
+        flex: 1,
+        color: 'black'
+    },
+    searchEmpty: {
+        alignItems: 'center',
+        margin: 8,
+    },
+    searchEmptyText: {
+        color: 'black'
     }
-
-
 })
